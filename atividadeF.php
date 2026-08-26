@@ -69,6 +69,6 @@ function usortHectares(array $nArray, $tamanhoArray){
     return $nArray;
 }
 
-$arrayOrdenadoCultura = usortCultura($talhoes, $tamanho);
+$arrayOrdenadoCultura = usortCultura($talhoes, $tamanho, 'cultura');
 
 print_r(usortHectares($arrayOrdenadoCultura, $tamanho));
