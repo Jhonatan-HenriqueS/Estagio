@@ -20,15 +20,15 @@ foreach( $talhoes as $v){
 
 //Passo 1: criar um função meuUsort que ordena em ordem crescente a cultura e caso de o mesmo nome, deixa em ordem o número de hc maior
 
-function usortCultura(array $nArray, $tamanhoArray){
+function usortCultura(array $nArray, $tamanhoArray, $culturaHec){
 
     for ($i = 0; $i < $tamanhoArray; $i++){
-        $menorPalavra = $nArray[$i]['cultura'];
+        $menorPalavra = $nArray[$i][$culturaHec];
         $posicao = $i;
 
         for ($j = $i; $j < $tamanhoArray; $j++){
-            if ($menorPalavra > $nArray[$j]['cultura']){
-                $menorPalavra = $nArray[$j]['cultura'];
+            if ($menorPalavra > $nArray[$j][$culturaHec]){
+                $menorPalavra = $nArray[$j][$culturaHec];
                 $posicao = $j;
             }
         }
