@@ -1,39 +1,58 @@
 <?php
 
-function meuShuffle(array $array): array {
-    $n = 0;
+echo("
+                |------------------------------------|
+                |        Opção 1 - Atividade A       |
+                |        Opção 2 - Atividade B       |
+                |        Opção 3 - atividade E       |
+                |------------------------------------| 
+\n");
+
+$escolha = readline("Escolha a opção desejada: ");
+
+echo $escolha;
+
+
+
+//Criar uma função meuShuffle que ordena 60 mil vezes um array de A, B, C
+
+
+$letras = ['A', 'B', 'C'];
+
+function meuShuffle(array $array) {
+    $tamanho = 0;
     foreach ($array as $v) {
-        $n++;
+        $tamanho++;
     }
 
-    for ($i = $n - 1; $i > 0; $i--) {
-        $j = mt_rand(0, $i);
-        $temp = $array[$i];
-        $array[$i] = $array[$j];
-        $array[$j] = $temp;
+    for ($i = $tamanho - 1; $i > 0; $i--) {
+        $sortido = mt_rand(0, $i);
+        $intermediador = $array[$i];
+        $array[$i] = $array[$sortido];
+        $array[$sortido] = $intermediador;
     }
 
     return $array;
 }
 
-$original = ['A', 'B', 'C'];
-$totalRodadas = 60000;
-$contagem = [];
+function tabelaRepeticoes(array $nArray){
 
-for ($k = 0; $k < $totalRodadas; $k++) {
-    $resultado = meuShuffle($original);
+$repeticoes = [];
 
+for ($i = 0; $i < 60000; $i++) {
+    $embaralhado = meuShuffle($nArray);
     $chave = "";
-    foreach ($resultado as $letra) {
+
+    foreach ($embaralhado as $letra) {
         $chave = $chave . $letra;
     }
-
-    if (!isset($contagem[$chave])) {
-        $contagem[$chave] = 0;
-    }
-    $contagem[$chave]++;
+    
+    $repeticoes[$chave]++;
 }
 
-foreach ($contagem as $ordem => $vezes) {
-    echo "$ordem: $vezes vezes\n";
+return $repeticoes;
+}
+
+foreach (tabelaRepeticoes($letras) as $chaves => $quantidade) {
+    echo "A ordem $chaves, se repetiu $quantidade vezes\n";
 }
