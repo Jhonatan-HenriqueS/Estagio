@@ -5,54 +5,37 @@ $forca = ["casa", "carro", "livro", "computador", "guarda-chuva", "pe-de-muleque
 do{
     echo("
                 |-------------------------------------------|
-                |        Opção 1 - Iniciar novo jogo (A)    |
-                |        Opção 2 - Iniciar novo jogo (B)    |
-                |        Opção 3 - Iniciar novo jogo (C)    |
-                |        Opção 4 - Iniciar novo jogo (D)    |
+                |        Opção 1 - Iniciar novo jogo        |
                 |        Opção 0 - Sair                     |
                 |-------------------------------------------| 
-\n");
+    \n");
 
-$escolha = readline("Informe a opção desejada: ");
-echo "\033[2J\033[;H";
+    $escolha = readline("Informe a opção desejada: ");
+    echo "\033[2J\033[;H";
 
 
     switch($escolha){
-        
-        case 1:    
-            $sublinhado = exibirSublinhado($forca);
-            echo "Adivinhe a palavra \n $sublinhado";           
-            break;
-        case 2:
-            $resultadoFinal = exibirAcertos($forca);
-            echo "\n Finalizado! \nA palavra era: $resultadoFinal";
-            break;
-        case 3:
-            $resultadoFinal = exibirVidas($forca);
-            echo "\n Finalizado! \nA palavra era: $resultadoFinal";
-            break;
-        case 4:
-        //    do {
-        //     echo "
-        //         |-------------------------------------------|
-        //         |        Opção 1 - Objetos                  |
-        //         |        Opção 2 - animais                  |
-        //         |        Opção 3 - personagens              |
-        //         |        Opção 4 - verbos                   |
-        //         |        Opção 5 - filmes                   |
-        //         |        Opção 6 - profissoes               |
-        //         |        Opção 7 - lugares                  |
-        //         |        Opção 0 - Sair                     |
-        //         |-------------------------------------------| 
-        //     ";
+        case 1:
+            echo "
+                |-------------------------------------------|
+                |        Opção 1 - Objetos                  |
+                |        Opção 2 - animais                  |
+                |        Opção 3 - personagens              |
+                |        Opção 4 - verbos                   |
+                |        Opção 5 - filmes                   |
+                |        Opção 6 - profissoes               |
+                |        Opção 7 - lugares                  |
+                |        Opção 0 - Sair                     |
+                |-------------------------------------------| 
+            ";
         //     $categoriaInformada = readline("Seleciona a categoria que deseja jogar: ");
 
         //    } while(ctype_lower($categoriaInformada) !== true && $categoriaInformada != 0);
 
        $dadosCSV = extrairDados();
 
-       print_r($dadosCSV);
-
+       $categoria = readline("Informe uma categoria: ");
+       exibirCsv($dadosCSV, $categoria);
             
             break;
         case 0:
@@ -64,71 +47,15 @@ echo "\033[2J\033[;H";
     }
 }while($escolha != 0);
 
-//Atividade A: Criar uma função que cria campos para as letras do jogo da forca.
-
-function exibirSublinhado(array $nArray){
-
-    $chave = array_rand($nArray);
-    
-    $sublinhados = "";
-    foreach (str_split($nArray[$chave]) as $letra){
-        if ($letra === "-"){
-            $sublinhados .= " - ";
-            continue;
-        }
-
-        $sublinhados .= " _ ";
-
-    }
-
-    return $sublinhados;
-}
-
-//Atividade B: Criar uma função que agora verifica se as letras digitadas pelo o usuário possuem nos campos, se sim, deve mostra-las. 
-
-function exibirAcertos(array $nArray){
-
-    $chave = array_rand($nArray);
-    $palavraSortida = $nArray[$chave];
-    $letraDigitada = "";
-    $sublinhados = [];
-
-        do{
-            
-            foreach (str_split($palavraSortida) as $key => $letra){
-                if (!isset($sublinhados[$key]))
-                    $sublinhados[$key] = " _ ";
-
-                if ($letra === "-"){
-                    $sublinhados[$key] = " - ";
-                    continue;
-                }   
-
-                if ($letraDigitada == $letra){
-                    $sublinhados[$key] = " $letra ";
-                }
-            }
-
-            $palavraImplode = implode('', $sublinhados);
-
-            if (str_replace(' ', '', $palavraImplode) == $palavraSortida)
-                break;
-
-            echo $palavraImplode;
-            echo "\n\nAdivinhe a palavra \n";
-            $letraDigitada = readline("Informe uma letra ou 0 para encerrar: ");
-
-        } while ($letraDigitada != "0");
-
-    return $palavraSortida;
-}
-
 //Atividade C: Criar uma função que existe apenas 6 vidas, ou seja, se errar 6 vezes o jogador perde
+
+function sortearPalavra ($array) {
+    return $array[array_rand($array)];
+}
 
 function exibirVidas(array $nArray){
 
-    $chave = array_rand($nArray);
-    $palavraSortida = $nArray[$chave];
+    $palavraSortida = sortearPalavra($nArray);
     $letraDigitada = "";
 
     $existe = "false";
@@ -137,7 +64,7 @@ function exibirVidas(array $nArray){
     $sublinhados = [];
 
         do{
-            //Trasnforma a palavra em um array
+            // Array é transformado em palavra para realizar processamento
             foreach (str_split($palavraSortida) as $key => $letra){
                 //Se na chave encontrada não possuir nenhum valor, adiciona _
                 if (!isset($sublinhados[$key]))
@@ -160,10 +87,10 @@ function exibirVidas(array $nArray){
             //Transforma o array em letras
             $palavraImplode = implode('', $sublinhados);
 
-            //Verifica se a palavra foi encontrada
             if (!$existe){
-                //Verifica se é letra e se ela é minuscula; e verifica se a palavra não foi digitada
-                if (ctype_lower($letraDigitada) && !str_contains($letrasDigitadas, $letraDigitada)){ //C_W Verifica se é letra e se é minúscula e str_C verifica a palvra dentro das palvras digitadas
+                
+                //Faço a verificação da letra digitada para descontar a vida. Verifico se é letra minúscula e se ela já existe
+                if (ctype_lower($letraDigitada) && !str_contains($letrasDigitadas, $letraDigitada)){ 
                     $vidasRestantes--;
                     echo "\n Letra inválida, -1 vida \n Você possui $vidasRestantes vidas restantes!\n";
                     $letrasDigitadas .= "$letraDigitada, ";
@@ -178,15 +105,12 @@ function exibirVidas(array $nArray){
             echo $palavraImplode;  
             echo ($letrasDigitadas == "") ? "\nNenhum erro até o momento\n" : "\nLetras já usadas: $letrasDigitadas \n";
 
-            //Enquanto o usuário não digitar apenas um caractere ou 0, o código pergunta a letra
             do{
-                $letraDigitada = readline("Informe uma letra ou 0 para encerrar: ");
+                $letraDigitada = ctype_lower(readline("Informe uma letra ou 0 para encerrar: "));
             }while (strlen(trim($letraDigitada)) != 1 && $letraDigitada != "0");
 
-            //Esse false permite que o foreach não verifique o false de primeira, p não ter erros
             $existe = false;
 
-            //Limpa o terminal
             echo "\033[2J\033[;H";
 
         } while ($letraDigitada != "0");
@@ -196,19 +120,18 @@ function exibirVidas(array $nArray){
 
 //Atividade D: As palvras do jogo devem ser de outro arquivo em .csv, o usuário deve escolher a categoria e pode adicionar uma nova palavra
 
-// function exibirScv(array $nArray, $categoriaSelecionada){
+function exibirCsv(array $nArray, $categoriaSelecionada){
 
-//         //preocura categoria dentro de cabeçalho e retorna a chave
+    $arrayCategoria = array_filter($nArray, function ($cat) {
 
-//         if ($chaveCategoria !== false && $chavePalavra !== false){
+    });
 
-//         } else {
-//             return "Coluna ou palavra não econtrada!";
-//         }
-
-    
-//     return $categoriaArray;
-// }
+    if(!$arrayCategoria){
+        return "A categoria selecionada não foi encontrada!";
+    } else {
+        return $arrayCategoria;
+    }
+}
 
 //Abrir arquivo .CSV e retorna o array de todos os valores
 
@@ -222,6 +145,8 @@ function extrairDados(){
 
         //Seleciona cada coluna e seus devidos valores dentro do csv e passa para a váriavel; Enquanto exisitir palavra, execute
         while (($fields =  fgetcsv($handle, 0, ";"))) {
+
+            //A coluna vira chave daquele valor no meu array
             $dadosExtraidos[] = array_combine($cabecalho, $fields); 
         }
 
