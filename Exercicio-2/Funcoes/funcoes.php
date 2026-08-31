@@ -2,15 +2,17 @@
 
 //Lógica do jogo da forca
 
-function exibirVidas(array $nArray){
+function exibirVidas(array $nArray, array $placar){
 
     $palavraSortida = $nArray[array_rand($nArray)]['palavra'];
     $letraDigitada = "";
 
     $existe = "false";
-    $vidasRestantes = 6;
+    $tentativas = 6;
     $letrasDigitadas = "";
     $sublinhados = [];
+
+    $vezJogador = 0;
 
         do{
 
@@ -30,6 +32,7 @@ function exibirVidas(array $nArray){
                 // Verifica se a letra existe 
                 if ($letraDigitada == $letra){
                     $sublinhados[$key] = "$letra";
+                    $placar[$vezJogador] += 2;
                     $existe = true;
                 }
                          
@@ -40,19 +43,21 @@ function exibirVidas(array $nArray){
 
             // Verifica existência da letra e se já foi usada
             if (!$existe && !str_contains($letrasDigitadas, $letraDigitada)){
-                    $vidasRestantes--;
-                    $letrasDigitadas .= "$letraDigitada, ";
-                    echo "\n Letra inválida, -1 vida \n Você possui $vidasRestantes vidas restantes!\n";
+                $tentativas--;
+                $letrasDigitadas .= "$letraDigitada, ";
+                $placar[$vezJogador] -= 1;
+
+                echo "\n Letra inválida, -1 vida \n Você possui $tentativas tentativas restantes!\n";
             }
 
-            if ($palavraImplode == $palavraSortida || $vidasRestantes == 0) break;
+            if ($palavraImplode == $palavraSortida || $tentativas == 0) break;
 
             echo $palavraImplode;  
             echo ($letrasDigitadas == "") ? "\nNenhum erro até o momento\n" : "\nLetras já usadas: $letrasDigitadas \n";
 
             $letraDigitada = verificarLetra($letraDigitada);
-           
             $existe = false;
+            $vezJogador = !$vezJogador;
 
             echo limpar();
 
@@ -176,13 +181,8 @@ function adicionarPalavra(array $nArray){
 
 // Adicionar jogadores ao jogo
 
-function jogadores(string $j1, string $j2, $existe){
-    $placar = [
-            "$j1" => 0,
-            "$j2" => 0
-    ];
-
-
+function jogadores($placar){
+    
 }
 
 function limpar(){

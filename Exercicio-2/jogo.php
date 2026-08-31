@@ -20,10 +20,13 @@ do{
     switch($escolha){
         case 1:
             echo limpar();
-            $jogador1 = readline("Informe o nome do jogaor 1: ");
-            $jogador2 = readline("Informe o nome do jogaor 2: ");
+            
+            $placar = [
+               readline("Informe o nome do jogaor 1: ") => 0,
+               readline("Informe o nome do jogaor 2: ") => 0
+            ];
 
-            echo "FInalizado!\nA palavra era: " . exibirVidas(verificarCategoria($dadosCSV, true));
+            echo "FInalizado!\nA palavra era: " . exibirVidas(verificarCategoria($dadosCSV, true), $placar);
             break;
         case 2:
             adicionarPalavra(selecionarPalavra($dadosCSV));
