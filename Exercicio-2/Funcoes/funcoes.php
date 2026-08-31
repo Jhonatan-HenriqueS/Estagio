@@ -12,10 +12,11 @@ function exibirVidas(array $nArray, array $placar){
     $letrasDigitadas = "";
     $sublinhados = [];
 
+    $jogadores = array_keys($placar);
     $vezJogador = 0;
 
         do{
-
+            $vezJogador = !$vezJogador;
             // Array é transformado em palavra para realizar processamento
             foreach (str_split($palavraSortida) as $key => $letra){
 
@@ -32,7 +33,7 @@ function exibirVidas(array $nArray, array $placar){
                 // Verifica se a letra existe 
                 if ($letraDigitada == $letra){
                     $sublinhados[$key] = "$letra";
-                    $placar[$vezJogador] += 2;
+                    $placar[$jogadores[$vezJogador]]["pontos"]++;   
                     $existe = true;
                 }
                          
@@ -45,19 +46,26 @@ function exibirVidas(array $nArray, array $placar){
             if (!$existe && !str_contains($letrasDigitadas, $letraDigitada)){
                 $tentativas--;
                 $letrasDigitadas .= "$letraDigitada, ";
-                $placar[$vezJogador] -= 1;
+                $placar[$jogadores[$vezJogador]]["vidas"]--;
 
                 echo "\n Letra inválida, -1 vida \n Você possui $tentativas tentativas restantes!\n";
             }
 
-            if ($palavraImplode == $palavraSortida || $tentativas == 0) break;
+            if ($palavraImplode == $palavraSortida || $tentativas == 0){
+                echo resultadoPlacar($placar($jogadores));
+                break;
+            }
 
-            echo $palavraImplode;  
+            echo $palavraImplode;
+
+            foreach ($placar as $jogador => $placarJogador) {
+                echo "\nO Jogador $jogador está com: {$placarJogador["pontos"]} pontos";
+            }  
+
             echo ($letrasDigitadas == "") ? "\nNenhum erro até o momento\n" : "\nLetras já usadas: $letrasDigitadas \n";
 
-            $letraDigitada = verificarLetra($letraDigitada);
+            $letraDigitada = verificarLetra($letraDigitada, $jogadores[$vezJogador]);
             $existe = false;
-            $vezJogador = !$vezJogador;
 
             echo limpar();
 
@@ -141,9 +149,9 @@ function menuCategorias(array $nArray){
 
 // Valida a letra informada
 
-function verificarLetra(string $letra){
+function verificarLetra(string $letra, string $jogador){
     do{
-        $letra = strtolower(readline("Informe uma letra ou 0 para encerrar: "));
+        $letra = strtolower(readline("É a vez de: $jogador, informe uma letra ou 0 para encerrar: "));
 
         if ($letra === "0") return "0";
 
@@ -181,8 +189,27 @@ function adicionarPalavra(array $nArray){
 
 // Adicionar jogadores ao jogo
 
-function jogadores($placar){
-    
+function resultadoPlacar($placar){
+    if ($placar[0] > $placar[1]) return "O(A) {$placar[0]} ganhou o jogo \n";
+
+    if ($placar[0] == $placar[1]) return "O jogo empatou \n";
+        
+    return "O(A) {$placar[1]} ganhou o jogo\n";
+}
+
+// Retorna cadastro de jogadores
+
+function cadastrarJogadores(){
+    return [
+               readline("Informe o nome do jogador 1: ") => [
+                "pontos" => 0,
+                "vidas" => 3
+               ],
+               readline("Informe o nome do jogador 2: ") => [
+                "pontos" => 0,
+                "vidas" => 3
+               ]
+            ];
 }
 
 function limpar(){
