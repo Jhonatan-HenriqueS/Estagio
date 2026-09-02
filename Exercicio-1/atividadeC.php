@@ -8,7 +8,7 @@ function meuArrayUnique(array $nArray){
    $newArray = [];
 
    foreach ($nArray as $value){
-    $jaExiste = false;
+   $jaExiste = false;
 
     foreach ($newArray as $v){
         if ($v == $value){

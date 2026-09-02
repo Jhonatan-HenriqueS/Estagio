@@ -2,9 +2,9 @@
 
 //Lógica do jogo da forca
 
-function exibirVidas(array $nArray, array $placar){
+function exibirVidas(array $dadosCSV, array $placar){
 
-    $palavraSortida = $nArray[array_rand($nArray)]['palavra'];
+    $palavraSortida = $dadosCSV[array_rand($dadosCSV)]['palavra'];
     $letraDigitada = "";
 
     $existe = "false";
@@ -13,21 +13,22 @@ function exibirVidas(array $nArray, array $placar){
 
     $jogadores = array_keys($placar);
     $totalJodagores = count($jogadores);
-    $vezJogador = 0;
+    $vezJogador = 1;
 
         do{
             // Array é transformado em palavra para realizar processamento
             foreach (str_split($palavraSortida) as $key => $letra){
 
                 // Verifica se a posição não existe
-                if (!isset($sublinhados[$key]))
+                if (!isset($sublinhados[$key])){
                     $sublinhados[$key] = "_";
+                }
 
                 // Verifica se há hifen
                 if ($letra === "-"){
                     $sublinhados[$key] = " - ";
                     continue;
-                }   
+                }
 
                 // Verifica se a letra existe 
                 if ($letraDigitada == $letra){
@@ -40,6 +41,7 @@ function exibirVidas(array $nArray, array $placar){
 
             // Transforma o Array em uma palavra
             $palavraImplode = implode('', $sublinhados);
+            $vidasJogador = $placar[$jogadores[$vezJogador]]["vidas"];
 
             // Verifica existência da letra e se já foi usada
             if (!$existe && !str_contains($letrasDigitadas, $letraDigitada)){
@@ -47,7 +49,7 @@ function exibirVidas(array $nArray, array $placar){
                 $placar[$jogadores[$vezJogador]]["vidas"]--;
                 $placar[$jogadores[$vezJogador]]["pontos"]--;
 
-                echo "\n Letra inválida, -1 vida \n {$jogadores[$vezJogador]} possui {$placar[$jogadores[$vezJogador]]["vidas"]} vidas restantes!\n";       
+                echo "\n Letra inválida, -1 vida \n {$jogadores[$vezJogador]} possui $vidasJogador vidas restantes!\n";       
             }
 
             $tentativas = ($totalJodagores === 2) 
@@ -56,9 +58,7 @@ function exibirVidas(array $nArray, array $placar){
 
 
             if ($palavraImplode == $palavraSortida || $tentativas === 0){
-                echo ($totalJodagores > 1) 
-                ? resultadoPlacar2($placar, $jogadores) 
-                : resultadoPlacar1($placar[$jogadores[$vezJogador]]["vidas"]);
+                echo resultadoPlacar($placar, $jogadores);
                 break;
             }
 
@@ -80,7 +80,6 @@ function exibirVidas(array $nArray, array $placar){
               
             $letraDigitada = verificarLetra($jogadores[$vezJogador]);
 
-
             echo limpar();
 
         } while ($letraDigitada != "0");
@@ -88,74 +87,51 @@ function exibirVidas(array $nArray, array $placar){
     return $palavraSortida;
 }
 
-// Retorna os dados do arquivo csv
+function selecionarCategoria(array $dadosCSV){
+    $categorias = array_unique(array_column($dadosCSV, 'categoria'));
 
-function extrairDados(){
-    $dadosExtraidos = [];
-
-    // Verifica se o arquivo existe
-    if(($handle = fopen("Lib/data.csv", "r"))){
-
-        // Seleciona e pula a primeria linha (caeçalho)
-        $cabecalho = fgetcsv($handle, 0, ";");
-
-        // Executa enquanto existir palavras no arquivo
-        while (($fields =  fgetcsv($handle, 0, ";"))) {
-
-        // extrai os dados com chave e valores
-        $dadosExtraidos[] = array_combine($cabecalho, $fields); 
-        }
-
-        fclose($handle);      
-    } else {
-         die("O diretório não existe!");
-    }
-
-    return $dadosExtraidos;
-}
-
-// Filtra apenas a categoria selecionada
-
-function filtrarCategoria(array $nArray, string $categoriaSelecionada){
-
-    // Seleciona apenas a categoria selecionada 
-    $arrayCategoria = array_filter($nArray, fn($cat) => $cat['categoria'] == strtolower($categoriaSelecionada));
-
-    if(empty($arrayCategoria)){
-        return false;
-    } 
-    
-    return $arrayCategoria;
-}
-
-// Valida existência da categoria informada
-
-function verificarCategoria(array $nArray, bool $retorno){
-    menuCategorias($nArray);
+    exibirCategorias($categorias);
 
     do{
         $categoria = strtolower(readline("Informe uma categoria: "));
-        $resultado = filtrarCategoria($nArray, $categoria);
-    }while (!$resultado);
+        $palavrasDaCategoria = array_filter($dadosCSV, fn($cat) => $cat['categoria'] == strtolower($categoria));
 
-    if ($retorno) return $resultado;
+    }while (!isset($palavrasDaCategoria));
 
-    return $categoria;
+    return $palavrasDaCategoria;
 }
 
-//Exibe o menu e retorna a categoria já validada
+function resultadoPlacar (array $placar, array $jogadores){ //refatorar com foreach
+    if (count($jogadores) > 1){
+        $jogadorVerncedor = [];
 
-function menuCategorias(array $nArray){
+        foreach ($placar as $chave => $valor){
+            
+        }
+    } 
 
-    //Seleciona apenas os valores de categoria 
-    $arrayCategorias = array_unique(array_column($nArray, 'categoria'));
-    $i = 0;
+    if ($placar[$jogadores[0]]["vidas"] > 0) return "Você ganhou o jogo!\n";
+    
+    return "Você perdeu o jogo";
+
+}
+
+/*$pontosJogador1 = $placar[$jogadores[0]]["pontos"];
+        $pontosJogador2 = $placar[$jogadores[1]]["pontos"];
+
+        if ($pontosJogador1 > $pontosJogador2) return "$jogadores[0] ganhou o jogo\n";
+        
+        if ($pontosJogador1 < $pontosJogador2) return "$jogadores[1] ganhou o jogo\n";
+
+        return "O jogo empatou!\n";
+}*/
+
+function exibirCategorias(array $categorias){
 
     echo "\n\t|-------------------------------------------|\n";
-
-    foreach ($arrayCategorias as $categoria){
-        echo "\t|         \t $i - $categoria \t            |\n";
-        $i++;
+    
+    foreach ($categorias as $categoria){
+        echo "\t|         \t $categoria \t            |\n";
     }
 
     echo "\t|-------------------------------------------|\n";
@@ -176,8 +152,8 @@ function verificarLetra(string $jogador){
 
 // Valida a categoria e a palavra 
 
-function selecionarPalavra(array $nArray){
-    $categoria = verificarCategoria($nArray, false);
+function criarPalavra(array $dadosCSV){
+    $categoria = selecionarCategoria($dadosCSV);
 
     $palavra = strtolower(readline("Informa a palavra que deseja adicionar: "));
 
@@ -188,10 +164,56 @@ function selecionarPalavra(array $nArray){
     ];
 }
 
+function cadastrarJogadores(){
+    do {
+        $qtdJogadores = readline("Deseja jogar com 1 ou 2 jogadores?: ");
+        $jogadores = [];
 
-// Adiciona uma palavra nova a sua devida categoria
+        if ($qtdJogadores > 2 || $qtdJogadores < 1) {
+            echo "Informe uma quantidade válida de jogadores! \n";
+            continue;
+        }
 
-function adicionarPalavra(array $nArray){
+        for ($i = 0; $i < $qtdJogadores; $i++) { 
+            $nome = readline("Informe seu nome: ");
+            $jogadores[$nome] = [
+                "pontos" => 0,
+                "vidas" => 6 / $qtdJogadores
+            ];
+        }
+        
+        return $jogadores;
+    } while (true);
+}
+
+function limpar(){
+    return "\033[2J\033[;H";
+}
+
+/**
+ * Funções de leitura e escrita do CSV
+ */
+
+function extrairDados(){
+    $dadosExtraidos = [];
+
+    if(($handle = fopen("Lib/data.csv", "r"))){
+        $cabecalho = fgetcsv($handle, 0, ";");
+
+        while (($fields =  fgetcsv($handle, 0, ";"))) {
+
+        $dadosExtraidos[] = array_combine($cabecalho, $fields); 
+    }
+
+        fclose($handle);      
+    } else {
+         die("O diretório não existe!");
+    }
+
+    return $dadosExtraidos;
+}
+
+function salvarPalavraCSV(array $nArray){
 
     if(($handle = fopen("Lib/data.csv", "a"))){
 
@@ -199,54 +221,4 @@ function adicionarPalavra(array $nArray){
 
         fclose($handle);
     }
-}
-
-// Adicionar jogadores ao jogo
-
-function resultadoPlacar2(array $placar, array $jogador){
-    [$jogador1, $jogador2] = $jogador;
-
-    $pontos1 = $placar[$jogador1]["pontos"];
-    $pontos2 = $placar[$jogador2]["pontos"];
-
-    if ($pontos1 > $pontos2) return "O(A) $jogador1 ganhou o jogo, com $pontos1 pontos! \n";
-
-    if ($pontos2 > $pontos1) return "O(A) $jogador2 ganhou o jogo, com $pontos2 pontos! \n";
-
-    return "O jogo empatou \n";
-}
-
-function resultadoPlacar1(int $vidas){
-    if ($vidas > 0) return "\nVocê ganhou o jogo!\n";
-
-    return "\nVocê perdeu o jogo!\n";
-}
-
-// Retorna cadastro de jogadores
-
-function cadastrarJogadores(){
-    echo "1 - 1 Jogador \n2 - 2 Jogadores\n";
-
-    if ((readline("Com quantos jogadores deseja jogar?: ")) === "1"){
-        return [readline("Informe seu nome: ") => [
-                "pontos" => 0,
-                "vidas" => 6
-                ],
-            ];
-    }
-
-    return [
-               readline("Informe o nome do jogador 1: ") => [
-                "pontos" => 0,
-                "vidas" => 3
-               ],
-               readline("Informe o nome do jogador 2: ") => [
-                "pontos" => 0,
-                "vidas" => 3
-               ]
-            ];
-}
-
-function limpar(){
-    return "\033[2J\033[;H";
 }

@@ -1,9 +1,8 @@
 <?php
 
-require("Funcoes/funcoes.php");
+require_once("Funcoes/funcoes.php");
 
 $dadosCSV = extrairDados();
-$forca = ["casa", "carro", "livro", "computador", "guarda-chuva", "pe-de-muleque"];
 
 do{
     echo("
@@ -23,10 +22,10 @@ do{
 
             $placar = cadastrarJogadores();
 
-            echo "FInalizado!\nA palavra era: " . exibirVidas(verificarCategoria($dadosCSV, true), $placar);
+            echo "FInalizado!\nA palavra era: " . exibirVidas(selecionarCategoria($dadosCSV), $placar);
             break;
         case 2:
-            adicionarPalavra(selecionarPalavra($dadosCSV));
+            salvarPalavraCSV(criarPalavra($dadosCSV));
             break;
         case 0:
             echo "\n Finalizado! \n"; 
