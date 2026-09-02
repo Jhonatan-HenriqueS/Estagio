@@ -8,15 +8,14 @@ function exibirVidas(array $nArray, array $placar){
     $letraDigitada = "";
 
     $existe = "false";
-    $tentativas = 6;
     $letrasDigitadas = "";
     $sublinhados = [];
 
     $jogadores = array_keys($placar);
+    $totalJodagores = count($jogadores);
     $vezJogador = 0;
 
         do{
-            $vezJogador = !$vezJogador;
             // Array é transformado em palavra para realizar processamento
             foreach (str_split($palavraSortida) as $key => $letra){
 
@@ -44,15 +43,22 @@ function exibirVidas(array $nArray, array $placar){
 
             // Verifica existência da letra e se já foi usada
             if (!$existe && !str_contains($letrasDigitadas, $letraDigitada)){
-                $tentativas--;
                 $letrasDigitadas .= "$letraDigitada, ";
                 $placar[$jogadores[$vezJogador]]["vidas"]--;
+                $placar[$jogadores[$vezJogador]]["pontos"]--;
 
-                echo "\n Letra inválida, -1 vida \n Você possui $tentativas tentativas restantes!\n";
+                echo "\n Letra inválida, -1 vida \n {$jogadores[$vezJogador]} possui {$placar[$jogadores[$vezJogador]]["vidas"]} vidas restantes!\n";       
             }
 
-            if ($palavraImplode == $palavraSortida || $tentativas == 0){
-                echo resultadoPlacar($placar($jogadores));
+            $tentativas = ($totalJodagores === 2) 
+            ? array_sum(array_column($placar, "vidas"))
+            : $placar[$jogadores[$vezJogador]]["vidas"];
+
+
+            if ($palavraImplode == $palavraSortida || $tentativas === 0){
+                echo ($totalJodagores > 1) 
+                ? resultadoPlacar2($placar, $jogadores) 
+                : resultadoPlacar1($placar[$jogadores[$vezJogador]]["vidas"]);
                 break;
             }
 
@@ -62,10 +68,18 @@ function exibirVidas(array $nArray, array $placar){
                 echo "\nO Jogador $jogador está com: {$placarJogador["pontos"]} pontos";
             }  
 
-            echo ($letrasDigitadas == "") ? "\nNenhum erro até o momento\n" : "\nLetras já usadas: $letrasDigitadas \n";
+            echo ($letrasDigitadas == "") ? "\nNenhum erro até o momento \n" : "\nLetras já usadas: $letrasDigitadas \n";
 
-            $letraDigitada = verificarLetra($letraDigitada, $jogadores[$vezJogador]);
+            $vezJogador = ($totalJodagores === 2) ? $vezJogador ^= 1 : 0; 
             $existe = false;
+
+            while ($placar[$jogadores[$vezJogador]]["vidas"] === 0){
+                echo "\n{$jogadores[$vezJogador]} está eliminado! \n";
+                $vezJogador ^= 1;
+            }
+              
+            $letraDigitada = verificarLetra($jogadores[$vezJogador]);
+
 
             echo limpar();
 
@@ -149,7 +163,7 @@ function menuCategorias(array $nArray){
 
 // Valida a letra informada
 
-function verificarLetra(string $letra, string $jogador){
+function verificarLetra(string $jogador){
     do{
         $letra = strtolower(readline("É a vez de: $jogador, informe uma letra ou 0 para encerrar: "));
 
@@ -189,17 +203,38 @@ function adicionarPalavra(array $nArray){
 
 // Adicionar jogadores ao jogo
 
-function resultadoPlacar($placar){
-    if ($placar[0] > $placar[1]) return "O(A) {$placar[0]} ganhou o jogo \n";
+function resultadoPlacar2(array $placar, array $jogador){
+    [$jogador1, $jogador2] = $jogador;
 
-    if ($placar[0] == $placar[1]) return "O jogo empatou \n";
-        
-    return "O(A) {$placar[1]} ganhou o jogo\n";
+    $pontos1 = $placar[$jogador1]["pontos"];
+    $pontos2 = $placar[$jogador2]["pontos"];
+
+    if ($pontos1 > $pontos2) return "O(A) $jogador1 ganhou o jogo, com $pontos1 pontos! \n";
+
+    if ($pontos2 > $pontos1) return "O(A) $jogador2 ganhou o jogo, com $pontos2 pontos! \n";
+
+    return "O jogo empatou \n";
+}
+
+function resultadoPlacar1(int $vidas){
+    if ($vidas > 0) return "\nVocê ganhou o jogo!\n";
+
+    return "\nVocê perdeu o jogo!\n";
 }
 
 // Retorna cadastro de jogadores
 
 function cadastrarJogadores(){
+    echo "1 - 1 Jogador \n2 - 2 Jogadores\n";
+
+    if ((readline("Com quantos jogadores deseja jogar?: ")) === "1"){
+        return [readline("Informe seu nome: ") => [
+                "pontos" => 0,
+                "vidas" => 6
+                ],
+            ];
+    }
+
     return [
                readline("Informe o nome do jogador 1: ") => [
                 "pontos" => 0,
