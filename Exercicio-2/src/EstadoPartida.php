@@ -8,6 +8,8 @@ class EstadoPartida
     private array $sublinhados = [];
     private array $letrasUsadas = [];
 
+    //Constrói a classe com o array sublinhado preenchido
+
     public function __construct(string $palavra)
     {
         $this->palavra = $palavra;
@@ -17,10 +19,7 @@ class EstadoPartida
         }
     }
 
-    public function palavra()
-    {
-        return $this->palavra;
-    }
+    //Verifica se a letra existe
 
     public function verficarLetra(string $letra){
         $acertou = false;
@@ -39,28 +38,39 @@ class EstadoPartida
         return $acertou;
     }
 
-    public function jaTentou(string $letra)
+    //Verifica se a palavra foi descoberta
+    public function verificarPalavraDescoberta()
+    {
+        return $this->getProgressoDaPalavra() == $this->palavra;
+    }
+
+    //Verifica se a letra não existente já foi informada
+    public function verficarRepeticao(string $letra)
     {
         return in_array($letra, $this->letrasUsadas);
     }
 
-    public function registrarTentativa(string $letra)
+    //Insere a letra no array de letras usadas
+    public function setLetra(string $letra)
     {
         $this->letrasUsadas[] = $letra;
     }
 
-    public function palavraDescoberta()
+
+    //Funções para exibir valores
+    public function getPalavra()
     {
-        return $this->progresso() == $this->palavra;
+        return $this->palavra;
     }
 
-    public function progresso()
+    public function getProgressoDaPalavra()
     {
         return implode('', $this->sublinhados);
     }
 
-    public function letrasUsadas()
+    public function getLetrasUsadas()
     {
         return implode(', ', $this->letrasUsadas);
     }
+   
 }

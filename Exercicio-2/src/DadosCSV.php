@@ -2,11 +2,11 @@
 
 namespace App;
 
-class DadosPalavras 
+class DadosCSV 
 {
     private string $arquivo;
 
-    public function __construct(string $arquivo = __DIR__ . '/../Lib/data.csv')
+    public function __construct(string $arquivo)
     {
         $this->arquivo = $arquivo;
     }

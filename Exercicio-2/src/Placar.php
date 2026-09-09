@@ -15,23 +15,25 @@ class Placar{
             }
 
             for ($i = 0; $i < $qtdJogadores; $i++) { 
-                $nome = readline("Informe seu nome: ");
+
+                $nome = $this->verificarValorNull("Digite seu nome: ");
+
                 $this->jogadores[$nome] = [
                     "pontos" => 0,
                     "vidas" => 6 / $qtdJogadores
                 ];
-        }
+            }
 
-        break;
-    } while (true);
-}
+            break;
+        } while (true);
+    }
 
      //Função para definir vencedor
 
     public function resultadoPlacar(){
-        $nomesJogadores = $this->getNomeJogadores();
+        $nomeJogadores = $this->getNomeJogadores();
 
-        if (count($nomesJogadores) > 1){
+        if (count($nomeJogadores) > 1){
             $pontos = [];
 
             foreach($this->jogadores as $nome => $dadosPlacar){
@@ -48,9 +50,35 @@ class Placar{
             return $vencedor[0] . " ganhou o jogo com $maiorPontuacao pontos!\n";
         } 
     
-    return $this->getVidas($nomesJogadores[0]) > 0 
-           ? "Você ganhou o jogo!\n"
-           : "Você perdeu o jogo!\n";
+        return $this->getVidas($nomeJogadores[0]) > 0 
+            ? "Você ganhou o jogo!\n"
+            : "Você perdeu o jogo!\n";
+    }
+
+    //Somar vidas
+     public function somarVidas(string $jogador){
+        $nomeJogadores = $this->getNomeJogadores();
+        
+        if(count($nomeJogadores) > 1){
+            $somarVida = 0;
+
+            foreach ($nomeJogadores as $nome){
+                $somarVida += $this->jogadores[$nome]["vidas"];
+            }
+
+            return $somarVida;
+        }
+
+        return $this->getVidas($jogador);
+
+    }
+
+    public function verificarValorNull($mensagem){
+         do{
+            $valor = readline($mensagem);
+        }while(!trim($valor) || !ctype_lower($valor));
+
+        return $valor;
     }
 
     //Funções para exibir valores
@@ -69,7 +97,7 @@ class Placar{
     //Funções para alterar o placar
 
     public function adicionarPontuacao(string $jogador){
-        $this->jogadores[$jogador]["pontos"]++;
+        $this->jogadores[$jogador]["pontos"] += 2;
     }
 
     public function removerPontuacao(string $jogador){
@@ -79,6 +107,5 @@ class Placar{
     public function removerVida(string $jogador){
         $this->jogadores[$jogador]["vidas"]--;
     }
-
    
 }

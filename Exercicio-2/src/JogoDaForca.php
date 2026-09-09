@@ -3,18 +3,18 @@
 namespace App;
 
 class JogoDaForca{
-    private array $todosDados;
+    private array $dadosCSV;
     private array $categorias;
     private Placar $placar;
-    private DadosPalavras $dadosPalavras;
+    private DadosCSV $dadosPalavras;
 
-    public function __construct(Placar $placar, DadosPalavras $dadosPalavras)
+    public function __construct(Placar $placar, DadosCSV $dadosPalavras)
     {
         $this->placar = $placar;
         $this->dadosPalavras = $dadosPalavras;
 
-        $this->todosDados = $this->dadosPalavras->extrairDados();
-        $this->categorias = array_values(array_unique(array_column($this->todosDados, 'categoria')));
+        $this->dadosCSV = $this->dadosPalavras->extrairDados();
+        $this->categorias = array_values(array_unique(array_column($this->dadosCSV, 'categoria')));
     }
 
     public function iniciar()
@@ -30,8 +30,11 @@ class JogoDaForca{
     {
         $this->exibirCategorias();
 
-        $categoria = strtolower(trim(readline("Informe a categoria da nova palavra: ")));
-        $palavra = strtolower(trim(readline("Informe a palavra que deseja adicionar: ")));
+        echo "Se não desejar nenhuma, cria a sua própria categoria!";
+
+        $categoria = $this->placar->verificarValorNull("Informe uma categoria: ");
+
+        $palavra = $this->placar->verificarValorNull("Informe uma palavra para sua categoria: ");
 
         $this->dadosPalavras->salvarPalavraCSV([uniqid(), $categoria, $palavra]);
     }
@@ -41,7 +44,6 @@ class JogoDaForca{
         $partida = new EstadoPartida($palavras[array_rand($palavras)]['palavra']);
         $jogadores = $this->placar->getNomeJogadores();
         $vezJogador = 0;
-        $fimDeJogo = 0;
 
         while (true) {
             $jogadorAtual = $jogadores[$vezJogador];
@@ -55,18 +57,18 @@ class JogoDaForca{
             }
 
             $this->verificarLetra($partida, $jogadorAtual, $letra);
-            $fimDeJogo = $this->placar->getVidas($jogadores[0]) + $this->placar->getVidas($jogadores[1]); 
 
-            if ($partida->palavraDescoberta() || $fimDeJogo === 0) {
+            if ($partida->verificarPalavraDescoberta() || $this->placar->somarVidas($jogadorAtual) === 0) {
                 break;
             }
 
-            $vezJogador = $this->proximoJogador($jogadores, $vezJogador);
+            $vezJogador = $this->irProProximoJogador($jogadores, $vezJogador);
 
             echo $this->limpar();
+
         }
 
-        return "\nFinalizado!\nA palavra era: {$partida->palavra()}\n" . $this->placar->resultadoPlacar();
+        return "\nFinalizado!\nA palavra era: {$partida->getPalavra()}\n" . $this->placar->resultadoPlacar();
     }
 
     private function verificarLetra(EstadoPartida $partida, $jogador, $letra)
@@ -76,11 +78,11 @@ class JogoDaForca{
             return;
         }
 
-        if ($partida->jaTentou($letra)) {
+        if ($partida->verficarRepeticao($letra)) {
             return;
         }
 
-        $partida->registrarTentativa($letra);
+        $partida->setLetra($letra);
         $this->placar->removerPontuacao($jogador);
         $this->placar->removerVida($jogador);
 
@@ -89,40 +91,36 @@ class JogoDaForca{
 
     private function exibirEstado(EstadoPartida $partida, $jogadores)
     {
-        echo $partida->progresso();
+        echo $partida->getProgressoDaPalavra();
 
         foreach ($jogadores as $jogador) {
-            echo "\n\n$jogador está com: {$this->placar->getPontos($jogador)} pontos";
-            echo "\n$jogador está com: {$this->placar->getVidas($jogador)} vidas\n";
+            echo "\n\n$jogador está com: {$this->placar->getPontos($jogador)} pontos e {$this->placar->getVidas($jogador)} vidas\n";
         }
 
-        echo ($partida->letrasUsadas() === '')
+        echo ($partida->getLetrasUsadas() === '')
             ? "\nNenhum erro até o momento \n"
-            : "\nLetras já usadas: {$partida->letrasUsadas()} \n";
+            : "\nLetras já usadas: {$partida->getLetrasUsadas()} \n";
     }
-/* 
-    private function eliminados(array $jogadores)
-    {
-        foreach ($jogadores as $jogador) {
-            if ($this->placar->getVidas($jogador) > 0) {
-                return false;
-            }
-        }
 
-        return true;
-    } */
-
-    private function proximoJogador(array $jogadores, $vezJogador)
+    private function irProProximoJogador(array $jogadores, $vezJogador)
     {
-        if (count($jogadores) < 2) {
+        $totalJogadores = count($jogadores);
+
+        if ($totalJogadores < 2) {
             return 0;
         }
 
         $proximo = $vezJogador ^ 1;
+        $i = 0;
 
         while ($this->placar->getVidas($jogadores[$proximo]) === 0) {
             echo "\n{$jogadores[$proximo]} está eliminado! \n";
             $proximo ^= 1;
+            $i++;
+
+            if ($i == $totalJogadores) {
+                break;
+            }
         }
 
         return $proximo;
@@ -145,7 +143,7 @@ class JogoDaForca{
 
         do {
             $categoria = strtolower(trim(readline("Informe uma categoria: ")));
-            $palavrasDaCategoria = array_values(array_filter($this->todosDados, fn($linha) => $linha['categoria'] === $categoria));
+            $palavrasDaCategoria = array_values(array_filter($this->dadosCSV, fn($linha) => $linha['categoria'] === $categoria));
         } while (empty($palavrasDaCategoria));
 
         return $palavrasDaCategoria;
@@ -156,13 +154,11 @@ class JogoDaForca{
         do {
             $letra = strtolower(readline("É a vez de: $jogador, informe uma letra ou 0 para encerrar: "));
 
-            if ($letra === '0') {
-                return '0';
-            }
-        } while (strlen($letra) !== 1 || !ctype_lower($letra));
+        } while ((strlen($letra) !== 1 || !ctype_lower($letra)) && $letra !== "0");
 
         return $letra;
     }
+    
 
     public function limpar()
     {

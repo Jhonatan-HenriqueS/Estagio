@@ -1,13 +1,13 @@
 <?php
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
+use App\DadosCSV;
 use App\Placar;
-use App\DadosPalavras;
 use App\JogoDaForca;
 
 $placar = new Placar();
-$dadosPalavras = new DadosPalavras();
+$dadosPalavras = new DadosCSV( __DIR__ . '/../Lib/data.csv');
 $jogo = new JogoDaForca($placar, $dadosPalavras);
 
 do {
@@ -20,7 +20,7 @@ do {
     \n";
 
     $escolha = readline("Informe a opção desejada: ");
-    $jogo->limpar();
+    echo $jogo->limpar();
 
     switch ($escolha) {
         case 1:
