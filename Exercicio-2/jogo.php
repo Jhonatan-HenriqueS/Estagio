@@ -8,7 +8,8 @@ use App\JogoDaForca;
 
 $placar = new Placar();
 $dadosPalavras = new DadosCSV(__DIR__ . '/Lib/data.csv');
-$jogo = new JogoDaForca($placar, $dadosPalavras);
+$dadosPlacar = new DadosCSV(__DIR__ . '/Lib/placar.csv');
+$jogoForca = new JogoDaForca($placar, $dadosPalavras, $dadosPlacar);
 
 do {
     echo "
@@ -21,14 +22,17 @@ do {
     \n";
 
     $escolha = readline("Informe a opção desejada: ");
-    echo $jogo->limpar();
+    echo $jogoForca->limpar();
 
     switch ($escolha) {
         case 1:
-            $jogo->iniciar();
+            $jogoForca->iniciar();
             break;
         case 2:
-            $jogo->adicionarPalavra();
+            $jogoForca->adicionarPalavra();
+            break;
+        case 3:
+            $jogoForca->exibirPlacar();
             break;
         case 0:
             echo "\n Finalizado! \n";

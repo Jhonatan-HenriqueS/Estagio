@@ -39,7 +39,7 @@ class DadosCSV
         return $dadosExtraidos;
     }
 
-    public function salvarPalavraCSV(array $nArray)
+    public function salvarCSV(array $nArray)
     {
         $handle = $this->abrirArquivo("a");
 
@@ -47,4 +47,43 @@ class DadosCSV
 
         fclose($handle);
     }
+
+    public function buscarPontos($jogador)
+    {
+        $dadosPlacar = $this->extrairDados();
+
+        foreach ($dadosPlacar as $dados) {
+            if ($dados['jogador'] === $jogador) {
+                return $dados['pontos'];
+            }
+        }
+
+        return 0;
+    }
+
+    public function atualizarPontos(string $jogador, int $pontosTotais)
+    {
+        $dadosPlacar = $this->extrairDados();
+
+        foreach ($dadosPlacar as $chave => $dados) {
+            if ($dados['jogador'] === $jogador) {
+                $dadosPlacar[$chave]['pontos'] = $pontosTotais;
+                break;
+            }
+        }
+
+        $handle = $this->abrirArquivo("w");
+
+        fputcsv($handle, ['jogador', 'pontos'], ';');
+
+        foreach ($dadosPlacar as $dados) {
+            fputcsv($handle, [
+                $dados['jogador'],
+                $dados['pontos']
+            ], ';');
+        }
+
+        fclose($handle);
+    }
+
 }

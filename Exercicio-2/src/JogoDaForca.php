@@ -7,11 +7,13 @@ class JogoDaForca{
     private array $categorias;
     private Placar $placar;
     private DadosCSV $dadosPalavras;
+    private DadosCSV $dadosPlacar;
 
-    public function __construct(Placar $placar, DadosCSV $dadosPalavras)
+    public function __construct(Placar $placar, DadosCSV $dadosPalavras, DadosCSV $dadosPlacar)
     {
         $this->placar = $placar;
         $this->dadosPalavras = $dadosPalavras;
+        $this->dadosPlacar = $dadosPlacar;
 
         $this->dadosCSV = $this->dadosPalavras->extrairDados();
         $this->categorias = array_values(array_unique(array_column($this->dadosCSV, 'categoria')));
@@ -38,7 +40,13 @@ class JogoDaForca{
 
         $palavra = $this->placar->verificarValorNull("Informe uma palavra para sua categoria: ");
 
-        $this->dadosPalavras->salvarPalavraCSV([uniqid(), $categoria, $palavra]);
+        $this->dadosPalavras->salvarCSV([uniqid(), $categoria, $palavra]);
+    }
+
+    public function exibirPlacar(){
+        foreach ($this->dadosPlacar->extrairDados() as $placar) {
+            echo "{$placar['jogador']}: {$placar['pontos']} pontos\n";
+        }
     }
 
     private function jogarRodada(array $palavras)
@@ -72,6 +80,8 @@ class JogoDaForca{
             echo $this->limpar();
 
         }
+
+        $this->guardarPlacar($jogadores);
 
         echo $this->limpar();
 
@@ -164,6 +174,38 @@ class JogoDaForca{
         } while ((strlen($letra) !== 1 || !ctype_lower($letra)) && $letra !== "0");
 
         return $letra;
+    }
+
+    public function guardarPlacar(array $jogadores)
+    {
+        foreach ($jogadores as $jogador) {
+            $pontosNovos = $this->placar->getPontos($jogador);
+
+            if ($this->jogadorExiste($jogador)) {
+                $pontosAntigos = $this->dadosPlacar->buscarPontos($jogador);
+
+                $pontosTotais = $pontosAntigos + $pontosNovos;
+
+                $this->dadosPlacar->atualizarPontos(
+                    $jogador,
+                    $pontosTotais
+                );
+            } else {
+                $this->dadosPlacar->salvarCSV([
+                    $jogador,
+                    $pontosNovos
+                ]);
+            }
+        }
+}
+
+    private function jogadorExiste(string $jogador)
+    {
+        $dados = $this->dadosPlacar->extrairDados();
+
+        $jogadores = array_column($dados, 'jogador');
+
+        return in_array($jogador, $jogadores);
     }
     
 

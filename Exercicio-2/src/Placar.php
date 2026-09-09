@@ -23,7 +23,6 @@ class Placar{
                     "vidas" => 6 / $qtdJogadores
                 ];
             }
-
             break;
         } while (true);
     }
@@ -77,7 +76,7 @@ class Placar{
          do{
             $valor = strtolower(trim(readline($mensagem)));
 
-            if($valor !== '' || ctype_lower($valor)){
+            if($valor !== '' && ctype_lower($valor)){
                 return $valor;
             }
 
