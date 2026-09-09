@@ -1,39 +1,39 @@
 <?php
 
-require_once("Funcoes/funcoes.php");
+require 'vendor/autoload.php';
 
-$dadosCSV = extrairDados();
+use App\Placar;
+use App\DadosPalavras;
+use App\JogoDaForca;
 
-do{
-    echo("
+$placar = new Placar();
+$dadosPalavras = new DadosPalavras();
+$jogo = new JogoDaForca($placar, $dadosPalavras);
+
+do {
+    echo "
                 |-------------------------------------------|
                 |        Opção 1 - Iniciar novo jogo        |
                 |        Opção 2 - Cadastra nova palavra    |
                 |        Opção 0 - Sair                     |
                 |-------------------------------------------| 
-    \n");
+    \n";
 
     $escolha = readline("Informe a opção desejada: ");
-    echo limpar();
+    $jogo->limpar();
 
-    switch($escolha){
+    switch ($escolha) {
         case 1:
-            echo limpar();
-
-            $placar = cadastrarJogadores();
-
-            echo "FInalizado!\nA palavra era: " . exibirVidas(selecionarCategoria($dadosCSV), $placar);
+            $jogo->iniciar();
             break;
         case 2:
-            salvarPalavraCSV(criarPalavra($dadosCSV));
+            $jogo->adicionarPalavra();
             break;
         case 0:
-            echo "\n Finalizado! \n"; 
+            echo "\n Finalizado! \n";
             break;
         default:
             echo "\n Opção inválida, tente novamente. \n";
             break;
     }
-}while($escolha != 0);
-
-
+} while ($escolha != 0);
