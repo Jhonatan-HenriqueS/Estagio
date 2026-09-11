@@ -10,7 +10,7 @@ class EstadoPartida
 
     //Constrói a classe com o array sublinhado preenchido
 
-    public function __construct(string $palavra)
+    public function __construct($palavra)
     {
         $this->palavra = $palavra;
 
@@ -21,8 +21,12 @@ class EstadoPartida
 
     //Verifica se a letra existe
 
-    public function verficarLetra(string $letra){
+    public function verficarLetra($letra){
         $acertou = false;
+
+        if ($this->verificarRepeticaoAcertos($letra)){
+            return;
+        }
 
         foreach (str_split($this->palavra) as $indice => $letraPalavra) {
             if ($letraPalavra === '-') {
@@ -38,6 +42,77 @@ class EstadoPartida
         return $acertou;
     }
 
+    function desenharForca($vidasRestantes){
+        $forca = [
+            6 => "
+             ______        
+             |    |
+             |    |
+             |    
+             |
+             |
+             |       
+        _____|_____ ",
+            5 => "
+             ______        
+             |    |
+             |    |
+             |    O
+             |
+             |
+             |       
+        _____|_____ ",
+            4 => "
+             ______        
+             |    |
+             |    |
+             |    O
+             |    |
+             |
+             |       
+        _____|_____ ",
+           3 => "
+             ______        
+             |    |
+             |    |
+             |   \O
+             |    |
+             |   
+             |       
+        _____|_____ ",
+            2 => "
+             ______        
+             |    |
+             |    |
+             |   \O/
+             |    |
+             |   
+             |       
+        _____|_____ ",
+             1 => "
+             ______        
+             |    |
+             |    |
+             |   \O/
+             |    |
+             |   /
+             |       
+        _____|_____ ",
+             0 => "
+             ______        
+             |    |
+             |    |
+             |   \O/
+             |    |
+             |   / \
+             |       
+        _____|_____ ",
+        ];
+
+        
+        return $forca[$vidasRestantes];
+    }
+
     //Verifica se a palavra foi descoberta
     public function verificarPalavraDescoberta()
     {
@@ -45,17 +120,20 @@ class EstadoPartida
     }
 
     //Verifica se a letra não existente já foi informada
-    public function verficarRepeticao(string $letra)
+    public function verficarRepeticaoErros($letra)
     {
         return in_array($letra, $this->letrasUsadas);
     }
 
+    public function verificarRepeticaoAcertos($letra){
+        return in_array($letra, $this->sublinhados);
+    }
+
     //Insere a letra no array de letras usadas
-    public function setLetra(string $letra)
+    public function setLetra($letra)
     {
         $this->letrasUsadas[] = $letra;
     }
-
 
     //Funções para exibir valores
     public function getPalavra()

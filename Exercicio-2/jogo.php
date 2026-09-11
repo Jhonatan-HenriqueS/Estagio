@@ -7,7 +7,7 @@ use App\Placar;
 use App\JogoDaForca;
 
 $placar = new Placar();
-$dadosPalavras = new DadosCSV( __DIR__ . '/../Lib/data.csv');
+$dadosPalavras = new DadosCSV(__DIR__ . '/Lib/data.csv');
 $jogo = new JogoDaForca($placar, $dadosPalavras);
 
 do {
@@ -15,6 +15,7 @@ do {
                 |-------------------------------------------|
                 |        Opção 1 - Iniciar novo jogo        |
                 |        Opção 2 - Cadastra nova palavra    |
+                |        Opção 3 - Ver o Placar             |
                 |        Opção 0 - Sair                     |
                 |-------------------------------------------| 
     \n";

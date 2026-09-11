@@ -44,15 +44,15 @@ class Placar{
             $vencedor = array_keys($pontos, $maiorPontuacao);
 
             if (count($vencedor) > 1) {
-                return "O jogo empatou!\n";
+                return "\nO jogo empatou!\n";
             }
 
-            return $vencedor[0] . " ganhou o jogo com $maiorPontuacao pontos!\n";
+            return "\n{$vencedor[0]} ganhou o jogo com $maiorPontuacao pontos!\n";
         } 
     
         return $this->getVidas($nomeJogadores[0]) > 0 
-            ? "Você ganhou o jogo!\n"
-            : "Você perdeu o jogo!\n";
+            ? "\nVocê ganhou o jogo!\n"
+            : "\nVocê perdeu o jogo!\n";
     }
 
     //Somar vidas
@@ -75,10 +75,14 @@ class Placar{
 
     public function verificarValorNull($mensagem){
          do{
-            $valor = readline($mensagem);
-        }while(!trim($valor) || !ctype_lower($valor));
+            $valor = strtolower(trim(readline($mensagem)));
 
-        return $valor;
+            if($valor !== '' || ctype_lower($valor)){
+                return $valor;
+            }
+
+            echo "Digite alguma palavra! \n";
+        }while(true);
     }
 
     //Funções para exibir valores

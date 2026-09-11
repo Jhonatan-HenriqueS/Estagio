@@ -20,8 +20,10 @@ class JogoDaForca{
     public function iniciar()
     {
         $this->placar->cadastrarJogadores();
+        echo $this->limpar();
 
         $palavras = $this->selecionarCategoria();
+        echo $this->limpar();
 
         echo $this->jogarRodada($palavras);
     }
@@ -47,8 +49,11 @@ class JogoDaForca{
 
         while (true) {
             $jogadorAtual = $jogadores[$vezJogador];
+            $vidasRestantes = $this->placar->somarVidas($jogadorAtual);
 
-            $this->exibirEstado($partida, $jogadores);
+            $this->exibirEstado($partida, $jogadores, $vidasRestantes);
+            echo "\n";
+
 
             $letra = $this->receberLetra($jogadorAtual);
 
@@ -58,7 +63,7 @@ class JogoDaForca{
 
             $this->verificarLetra($partida, $jogadorAtual, $letra);
 
-            if ($partida->verificarPalavraDescoberta() || $this->placar->somarVidas($jogadorAtual) === 0) {
+            if ($partida->verificarPalavraDescoberta() || $vidasRestantes === 1) {
                 break;
             }
 
@@ -67,6 +72,8 @@ class JogoDaForca{
             echo $this->limpar();
 
         }
+
+        echo $this->limpar();
 
         return "\nFinalizado!\nA palavra era: {$partida->getPalavra()}\n" . $this->placar->resultadoPlacar();
     }
@@ -78,7 +85,7 @@ class JogoDaForca{
             return;
         }
 
-        if ($partida->verficarRepeticao($letra)) {
+        if ($partida->verficarRepeticaoErros($letra) || $partida->verificarRepeticaoAcertos($letra)) {
             return;
         }
 
@@ -89,17 +96,17 @@ class JogoDaForca{
         echo "\n Letra inválida, -1 vida \n $jogador possui {$this->placar->getVidas($jogador)} vidas restantes!\n";
     }
 
-    private function exibirEstado(EstadoPartida $partida, $jogadores)
+    private function exibirEstado(EstadoPartida $partida, $jogadores, $vidasRestantes)
     {
-        echo $partida->getProgressoDaPalavra();
+        echo $partida->desenharForca($vidasRestantes) . $partida->getProgressoDaPalavra() . "\n";
 
         foreach ($jogadores as $jogador) {
-            echo "\n\n$jogador está com: {$this->placar->getPontos($jogador)} pontos e {$this->placar->getVidas($jogador)} vidas\n";
+            echo "\n$jogador está com: {$this->placar->getPontos($jogador)} pontos e {$this->placar->getVidas($jogador)} vidas";
         }
 
         echo ($partida->getLetrasUsadas() === '')
-            ? "\nNenhum erro até o momento \n"
-            : "\nLetras já usadas: {$partida->getLetrasUsadas()} \n";
+            ? "\n\nNenhum erro até o momento \n"
+            : "\n\nLetras já usadas: {$partida->getLetrasUsadas()} \n";
     }
 
     private function irProProximoJogador(array $jogadores, $vezJogador)
