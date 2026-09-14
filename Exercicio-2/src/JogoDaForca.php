@@ -145,13 +145,20 @@ class JogoDaForca{
 
     private function exibirCategorias()
     {
-        echo "\n\t|-------------------------------------------|\n";
+        $tituloCaixa = "CATEGORIAS DISPONÍVEIS";
+        $maiorItem = max(array_map('strlen', $this->categorias)) + 4; 
+        $largura = max($maiorItem, strlen($tituloCaixa)) + 2;
 
-        foreach ($this->categorias as $categoria) {
-            echo "\t|         \t $categoria \t            |\n";
+        echo "\n+" . str_repeat("-", $largura) . "+\n";
+        echo "|" . str_pad($tituloCaixa, $largura, " ", STR_PAD_BOTH) . "|\n";
+        echo "+" . str_repeat("-", $largura) . "+\n";
+
+        foreach ($this->categorias as $indice => $categoria) {
+            $linha = sprintf(" %d - %s", $indice + 1, ucfirst($categoria));
+            echo "|" . str_pad($linha, $largura) . "|\n";
         }
 
-        echo "\t|-------------------------------------------|\n";
+        echo "+" . str_repeat("-", $largura) . "+\n";
     }
 
     private function selecionarCategoria()
@@ -182,9 +189,8 @@ class JogoDaForca{
             $pontosNovos = $this->placar->getPontos($jogador);
 
             if ($this->jogadorExiste($jogador)) {
-                $pontosAntigos = $this->dadosPlacar->buscarPontos($jogador);
-
-                $pontosTotais = $pontosAntigos + $pontosNovos;
+                
+                $pontosTotais = $this->dadosPlacar->buscarPontos($jogador) + $pontosNovos;
 
                 $this->dadosPlacar->atualizarPontos(
                     $jogador,

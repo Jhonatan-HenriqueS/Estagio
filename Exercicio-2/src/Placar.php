@@ -16,7 +16,9 @@ class Placar{
 
             for ($i = 0; $i < $qtdJogadores; $i++) { 
 
-                $nome = $this->verificarValorNull("Digite seu nome: ");
+                $nome = ($qtdJogadores > 1) 
+                ? $this->verificarValorNull("Digite o nome do ". $i + 1 ."° Jogador: ")
+                : $this->verificarValorNull("Digite seu nome: ");
 
                 $this->jogadores[$nome] = [
                     "pontos" => 0,
