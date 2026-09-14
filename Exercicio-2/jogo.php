@@ -11,16 +11,22 @@ $dadosPalavras = new DadosCSV(__DIR__ . '/Lib/data.csv');
 $dadosPlacar = new DadosCSV(__DIR__ . '/Lib/placar.csv');
 $jogoForca = new JogoDaForca($placar, $dadosPalavras, $dadosPlacar);
 
-do {
-    echo "
-                |-------------------------------------------|
-                |        Opção 1 - Iniciar novo jogo        |
-                |        Opção 2 - Cadastra nova palavra    |
-                |        Opção 3 - Ver o Placar             |
-                |        Opção 0 - Sair                     |
-                |-------------------------------------------| 
-    \n";
+$opcoesMenu = ["Sair", "Iniciar novo jogo", "Cadastrar nova palavra", "Ver o Placar"];
 
+do {
+
+    echo "
+    \t+-----------------------------------------+
+    \t|               MENU GAMEPLAY             |
+    \t+-----------------------------------------+
+    ";
+    foreach ($opcoesMenu as $i => $categoria) {
+        $i++;
+        echo "\t| Opção $i: " . str_pad($categoria, 30, " ", STR_PAD_BOTH) . " | \n";
+    }
+    echo "\t+-----------------------------------------+\n\n";
+
+    echo "\t";
     $escolha = readline("Informe a opção desejada: ");
     echo $jogoForca->limpar();
 

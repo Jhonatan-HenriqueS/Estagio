@@ -8,6 +8,9 @@ class Placar{
     public function cadastrarJogadores(){
         do {
             $qtdJogadores = readline("Deseja jogar com 1 ou 2 jogadores?: ");
+            $this->jogadores = [];
+
+            echo "\033[2J\033[;H";
 
             if ($qtdJogadores > 2 || $qtdJogadores < 1) {
                 echo "Informe uma quantidade válida de jogadores! \n";
@@ -82,7 +85,7 @@ class Placar{
                 return $valor;
             }
 
-            echo "Digite alguma palavra! \n";
+            echo "Digite alguma palavra! \n\n";
         }while(true);
     }
 

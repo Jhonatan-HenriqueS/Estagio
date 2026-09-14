@@ -40,7 +40,7 @@ class DadosCSV
     }
 
     public function salvarCSV(array $nArray)
-    {
+    {        
         $handle = $this->abrirArquivo("a");
 
         fputcsv($handle, $nArray, ";");

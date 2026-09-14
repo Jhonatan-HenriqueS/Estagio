@@ -34,19 +34,35 @@ class JogoDaForca{
     {
         $this->exibirCategorias();
 
-        echo "Se não desejar nenhuma, cria a sua própria categoria!";
+        echo "\nSe não desejar nenhuma, cria a sua própria categoria! \n\n";
 
         $categoria = $this->placar->verificarValorNull("Informe uma categoria: ");
-
         $palavra = $this->placar->verificarValorNull("Informe uma palavra para sua categoria: ");
 
         $this->dadosPalavras->salvarCSV([uniqid(), $categoria, $palavra]);
+        echo $this->limpar();
+
+        echo "Palavra cadastrada com sucesso!";
     }
 
     public function exibirPlacar(){
-        foreach ($this->dadosPlacar->extrairDados() as $placar) {
-            echo "{$placar['jogador']}: {$placar['pontos']} pontos\n";
+        $placarMaiorMenor = $this->dadosPlacar->extrairDados();
+        $i = 0;
+
+        usort($placarMaiorMenor, function ($a, $b ) {
+            return $b['pontos'] <=> $a['pontos'];
+        });
+
+        echo "\t+--------------------------------------+\n";
+        foreach ($placarMaiorMenor as $placar) {
+            $i++;
+            echo "\t|" . str_pad($i, 4, " ", STR_PAD_BOTH) 
+            . "-" 
+            . str_pad($placar['jogador'], 20, " ", STR_PAD_BOTH) 
+            . str_pad($placar['pontos'], 5, " ", STR_PAD_BOTH) 
+            . " pontos | \n";
         }
+        echo "\t+--------------------------------------+\n";
     }
 
     private function jogarRodada(array $palavras)
@@ -71,11 +87,12 @@ class JogoDaForca{
 
             $this->verificarLetra($partida, $jogadorAtual, $letra);
 
-            if ($partida->verificarPalavraDescoberta() || $vidasRestantes === 1) {
+            if ($partida->verificarPalavraDescoberta() || $vidasRestantes === 0) {
                 break;
             }
 
             $vezJogador = $this->irProProximoJogador($jogadores, $vezJogador);
+
 
             echo $this->limpar();
 
@@ -144,34 +161,44 @@ class JogoDaForca{
     }
 
     private function exibirCategorias()
-    {
-        $tituloCaixa = "CATEGORIAS DISPONÍVEIS";
-        $maiorItem = max(array_map('strlen', $this->categorias)) + 4; 
-        $largura = max($maiorItem, strlen($tituloCaixa)) + 2;
-
-        echo "\n+" . str_repeat("-", $largura) . "+\n";
-        echo "|" . str_pad($tituloCaixa, $largura, " ", STR_PAD_BOTH) . "|\n";
-        echo "+" . str_repeat("-", $largura) . "+\n";
-
-        foreach ($this->categorias as $indice => $categoria) {
-            $linha = sprintf(" %d - %s", $indice + 1, ucfirst($categoria));
-            echo "|" . str_pad($linha, $largura) . "|\n";
+    {   
+        echo "\t+-------------------------+\n";
+        foreach ($this->categorias as $i => $categoria) {
+            $i++;
+            echo "\t| $i -" . str_pad($categoria, 20, " ", STR_PAD_BOTH) . " | \n";
         }
-
-        echo "+" . str_repeat("-", $largura) . "+\n";
+        echo "\t+-------------------------+\n";
     }
+
 
     private function selecionarCategoria()
     {
         $this->exibirCategorias();
 
         do {
-            $categoria = strtolower(trim(readline("Informe uma categoria: ")));
-            $palavrasDaCategoria = array_values(array_filter($this->dadosCSV, fn($linha) => $linha['categoria'] === $categoria));
+            $categoria = trim(readline("Selecione uma opção: "));
+
+            if ($categoria < 1 || $categoria > count($this->categorias)){
+                echo "\nInforme um número valido!\n";
+                continue;
+            }
+
+            $palavrasDaCategoria = array_values(array_filter($this->dadosCSV, fn($linha) => $linha['categoria'] === $this->categorias[$categoria - 1]));
         } while (empty($palavrasDaCategoria));
 
         return $palavrasDaCategoria;
+
+        // $this->exibirCategorias();
+
+        // do {
+        //     $categoria = strtolower(trim(readline("Informe uma categoria: ")));
+        //     $palavrasDaCategoria = array_values(array_filter($this->dadosCSV, fn($linha) => $linha['categoria'] === $categoria));
+        // } while (empty($palavrasDaCategoria));
+
+        // return $palavrasDaCategoria;
     }
+
+    
 
     private function receberLetra($jogador)
     {
