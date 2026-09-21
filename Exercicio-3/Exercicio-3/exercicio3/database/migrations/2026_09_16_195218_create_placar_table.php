@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jogadores', function (Blueprint $table) {
+        Schema::create('jogador', function (Blueprint $table) {
             $table->id();
             $table->string('nome')->unique();
             $table->timestamps();
         });
 
-        Schema::create('placars', function (Blueprint $table) {
+        Schema::create('placar', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('jogador_id')->constrained('jogadores');
             $table->integer('pontuacao');
+            $table->foreignId('jogador_id')->constrained('jogador');
             $table->timestamps();
         });
 
@@ -32,20 +32,20 @@ return new class extends Migration
 
         Schema::create('palavras', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('categoria_id')->constrained('categorias');
             $table->string('nome');
+            $table->foreignId('categoria_id')->constrained('categorias');
             $table->timestamps();
         });
 
         Schema::create('partida', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('palavra_id')->constrained('palavras');
+            $table->foreignId('palavras_id')->constrained('palavras');
             $table->timestamps();
         });
 
         Schema::create('jogadores_partida', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('jogador_id')->constrained('jogadores');
+            $table->foreignId('jogador_id')->constrained('jogador');
             $table->foreignId('partida_id')->constrained('partida');
             $table->timestamps();
         });
@@ -60,7 +60,7 @@ return new class extends Migration
         Schema::dropIfExists('partida');
         Schema::dropIfExists('palavras');
         Schema::dropIfExists('categorias');
-        Schema::dropIfExists('placars');
-        Schema::dropIfExists('jogadores');
+        Schema::dropIfExists('placar');
+        Schema::dropIfExists('jogador');
     }
 };
