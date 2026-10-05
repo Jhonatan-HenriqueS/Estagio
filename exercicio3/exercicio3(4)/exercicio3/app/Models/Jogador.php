@@ -22,7 +22,8 @@ class Jogador extends Model
             Partida::class,
             'jogadores_partida',
             'jogador_id',
-            'partida_id'
+            'partida_id',
+            'placar'
         );
     }
 }

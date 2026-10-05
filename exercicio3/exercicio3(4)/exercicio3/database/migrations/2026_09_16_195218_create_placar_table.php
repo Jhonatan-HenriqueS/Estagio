@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('placar', function (Blueprint $table) {
+        Schema::create('placars', function (Blueprint $table) {
             $table->id();
             $table->integer('pontuacao');
             $table->foreignId('jogador_id')->constrained('jogadors');
@@ -26,13 +26,13 @@ return new class extends Migration
 
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
+            $table->string('nome')->unique();
             $table->timestamps();
         });
 
         Schema::create('palavras', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
+            $table->string('nome')->unique();
             $table->foreignId('categoria_id')->constrained('categorias');
             $table->timestamps();
         });
@@ -63,7 +63,7 @@ return new class extends Migration
         Schema::dropIfExists('partidas');
         Schema::dropIfExists('palavras');
         Schema::dropIfExists('categorias');
-        Schema::dropIfExists('placar');
+        Schema::dropIfExists('placars');
         Schema::dropIfExists('jogadors');
     }
 };

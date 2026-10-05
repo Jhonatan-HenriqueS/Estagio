@@ -15,7 +15,8 @@ $talhoes = [
 
 //Passo 1: criar um função meuUsort que ordena em ordem crescente a cultura e caso de o mesmo nome, deixa em ordem o número de hc maior
 
-function usortCultura(array $nArray, $tipo, $ascDesc){
+function usortOrdenacao(array $nArray, $tipo, $ascDesc){
+
     $tamanho = 0;
 
     foreach( $nArray as $v){
@@ -51,3 +52,4 @@ function usortCultura(array $nArray, $tipo, $ascDesc){
 }
 
 
+print_r(usortOrdenacao($talhoes, "cultura", "desc"));

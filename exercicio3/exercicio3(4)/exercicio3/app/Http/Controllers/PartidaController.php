@@ -37,10 +37,13 @@ class PartidaController extends Controller
         ));
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $categoria = Categoria::findOrFail($request->categoria_id);
 
-        $palavra = $categoria->palavras()->inRandomOrder()->firstOrFail();
+        $palavra = $categoria->palavras()
+            ->inRandomOrder()
+            ->firstOrFail();
 
         $partida = Partida::create([
             'categoria_id' => $categoria->id,
@@ -49,15 +52,11 @@ class PartidaController extends Controller
             'erros' => [],
         ]);
 
-        $jogador1 = Jogador::findOrFail($request->jogador1_id);
+        $jogador = Jogador::firstOrCreate([
+            'nome' => $request->jogador_nome
+        ]);
 
-        $partida->jogadores()->attach($jogador1->id);
-
-        if ($request->jogador2_id) {
-            $jogador2 = Jogador::findOrFail($request->jogador2_id);
-
-            $partida->jogadores()->attach($jogador2->id);
-        }
+        $partida->jogadores()->attach($jogador->id);
 
         return redirect()->route('partida', $partida->id);
     }
@@ -66,13 +65,9 @@ class PartidaController extends Controller
     {
         $tentativa = strtolower($request->letra);
 
-        $partida->load([
-            'palavra',
-            'jogadores.placar'
-        ]);
-
         $palavra = strtolower($partida->palavra->nome);
 
+        // chama o primeiro pois tem apenas 1 (por enquanto)
         $jogador = $partida->jogadores->first();
 
         $acertos = $partida->acertos ?? [];
@@ -88,9 +83,12 @@ class PartidaController extends Controller
         }
 
         if ($acertou) {
+            dd($jogador->placar);
+            /**
+             * partida -> placar -> jogadores -> pontuacao
+             */
             $jogador->placar->pontuacao += 2;
         } else {
-
             if (!in_array($tentativa, $erros)) {
                 $erros[] = $tentativa;
             }
