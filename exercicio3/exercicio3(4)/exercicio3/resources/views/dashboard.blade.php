@@ -12,6 +12,7 @@
 
 <body>
     <main class="h-screen flex justify-evenly items-center">
+        <div></div>
         <x-card class="w-[90vw] h-[90vh] bg-white/20">
             <section class="grid grid-cols-2 gap-7 h-screen">
                 <x-dashboard :categorias="$categorias" :partida="$partida" />
