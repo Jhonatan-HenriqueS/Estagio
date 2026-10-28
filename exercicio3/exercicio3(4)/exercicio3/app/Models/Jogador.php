@@ -3,27 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Jogador extends Model
 {
-
     protected $fillable = [
         'nome',
     ];
 
-    public function placar()
+    public function placares(): HasMany
     {
-        return $this->hasOne(Placar::class);
-    }
-
-    public function partidas()
-    {
-        return $this->belongsToMany(
-            Partida::class,
-            'jogadores_partida',
-            'jogador_id',
-            'partida_id',
-            'placar'
-        );
+        return $this->hasMany(Placar::class);
     }
 }

@@ -16,6 +16,7 @@
                     <label for="nome">Nome da categoria</label>
                     <input type="text" id="nome" name="nome" placeholder="Informe a categoria"
                         class="border p-3 rounded-2xl" required />
+
                 </div>
 
                 <x-button type="submit">Salvar</x-button>

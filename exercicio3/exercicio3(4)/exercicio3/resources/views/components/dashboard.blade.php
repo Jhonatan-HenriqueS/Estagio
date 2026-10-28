@@ -1,4 +1,4 @@
-@props(['categorias'])
+@props(['categorias', 'partida'])
 
 <x-card>
     <div class="flex gap-10">
@@ -12,7 +12,11 @@
             <p
                 class="text-gray-500 font-light py-5 px-10 bg-white/40 rounded-xl border border-gray-400"
             >
-                Nenhum partida jogada ainda.
+                @if($partida > 0)
+                    Partidas jogadas nesta conta: <span class="text-2xl text-center font-bold ml-4">{{ $partida }}</span>
+                @else
+                    Nenhuma partida jogada até o momento.
+                @endif
             </p>
         </div>
     </div>

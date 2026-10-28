@@ -6,7 +6,11 @@
         tipo="Pontuação"
         descricao="Visualize os jogadores"
     >
-        <x-slot:botao> <x-button-placar /></x-slot:botao>
+        <x-slot:botao>
+            <a href="{{ route('placar') }}">
+                <x-button-placar />
+            </a>
+        </x-slot:botao>
     </x-relatorie-text>
     <x-relatorie-text
         :valor="$categorias->count()"

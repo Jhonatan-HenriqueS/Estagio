@@ -22,7 +22,7 @@
     <x-fundo-preto />
     <div x-show="mostrar">
         <x-card
-            class="w-[90%] md:w-1/3 h-screen fixed top-0 left-0 z-50 bg-white/80"
+            class="w-[90%] md:w-1/3 h-screen fixed top-0 left-0 z-50 bg-white"
         >
             <div class="inline-flex justify-between">
                 <p class="font-semibold text-xl flex gap-3 items-center">
@@ -53,26 +53,30 @@
             <x-modal-partida :categorias="$categorias" />
             <x-modal-categorie />
             <x-modal-palavra :categorias="$categorias" />
-            <x-button-placar @click="mostrar = false" />
-            <x-button @click="mostrar = false">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-gallery-vertical-end preview-icon"
-                >
-                    <path d="M7 2h10" />
-                    <path d="M5 6h14" />
-                    <rect width="18" height="12" x="3" y="10" rx="2" />
-                </svg>
-                Hitórico
-            </x-button>
+            <a href="{{ route('placar') }}">
+                <x-button-placar />
+            </a>
+            <a href="{{ route('historico') }}">
+                <x-button>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-gallery-vertical-end preview-icon"
+                    >
+                        <path d="M7 2h10" />
+                        <path d="M5 6h14" />
+                        <rect width="18" height="12" x="3" y="10" rx="2" />
+                    </svg>
+                    Hitórico
+                </x-button>
+            </a>
             <x-card class="absolute bottom-8 left-6 right-6">
                 <section class="flex justify-between items-center">
                     <div class="flex gap-5 items-center">

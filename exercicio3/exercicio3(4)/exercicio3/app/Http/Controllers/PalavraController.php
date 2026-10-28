@@ -12,13 +12,24 @@ class PalavraController extends Controller
     }
 
     public function store(Request $request){
-        $palavra = new Palavra();
 
-        $palavra->categoria_id = $request->categoria_id;
-        $palavra->nome = $request->nome;
+        $request->validate(
+            [
+                'nome' => 'required|unique:palavras,nome',
+            ],
+            [
+                'nome.required' => 'Informe o nome da palavra.',
+                'nome.unique' => 'Essa palavra já existe.',
+            ]
+        );
 
-        $palavra->save();
+        Palavra::create([
+            'categoria_id' => $request->categoria_id,
+            'nome' => $request->nome,
+        ]);
 
-        return redirect('/dashboard');
+        
+
+        return redirect()->route('dashboard')->with('sucesso', 'Palavra criada com sucesso!');
     }
 }
